@@ -101,4 +101,3 @@ class TestAccountsApi(APITestCase):
 
         response = self.client.post(reverse('user-login'), data=new_user)
         self.assertEqual(400, response.status_code)
-

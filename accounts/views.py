@@ -1,11 +1,15 @@
 from datetime import datetime, timezone
-from accounts.serializers import LoginSerializer, CurrentUserSerializer, RegistrationSerializer
-from django.contrib.auth import get_user_model
+
+from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from accounts.serializers import LoginSerializer, CurrentUserSerializer, RegistrationSerializer, \
+    ResponseUserActivitySerializer
+from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
@@ -46,3 +50,10 @@ class RegistrationView(GenericAPIView):
         serializer.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserActivityView(generics.RetrieveAPIView):
+    """Get activity info for specific user"""
+    permission_classes = [IsAuthenticated]
+    queryset = User.objects.all()
+    serializer_class = ResponseUserActivitySerializer
