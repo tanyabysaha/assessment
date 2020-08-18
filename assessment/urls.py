@@ -25,6 +25,7 @@ from assessment import SWAGGER_URL
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('accounts.urls')),
+    path('api/v1/', include('posts.urls')),
 ]
 
 schema_view = get_schema_view(
