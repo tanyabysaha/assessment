@@ -39,3 +39,11 @@ class CurrentUserSerializer(serializers.ModelSerializer):
         model = User
         exclude = ('password', 'last_login')
         read_only_fields = ('email',)
+
+
+class ResponseUserActivitySerializer(serializers.ModelSerializer):
+    """Serializer for response user activity"""
+
+    class Meta:
+        model = User
+        fields = ('last_login', 'last_request')

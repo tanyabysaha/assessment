@@ -13,3 +13,17 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = "__all__"
         extra_kwargs = {'user': {'read_only': True}}
+
+
+class LikeAnalyticsSerializer(serializers.Serializer):
+    """Serializer for query parameters like analytics"""
+
+    date_from = serializers.DateField()
+    date_to = serializers.DateField()
+
+
+class ResponseLikeAnalyticsSerializer(serializers.Serializer):
+    """Serializer for response like analytics"""
+
+    post = serializers.UUIDField()
+    likes = serializers.IntegerField()

@@ -1,8 +1,11 @@
+from django.db.models import DateField, Count
+from django.db.models.functions import Cast
 from rest_framework.decorators import action
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from posts.models import Post, Like
-from posts.serializers import PostSerializer
+from posts.serializers import PostSerializer, LikeAnalyticsSerializer, ResponseLikeAnalyticsSerializer
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
@@ -29,3 +32,16 @@ class PostsViewSet(ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class LikeAnalyticsView(APIView):
+    """Get analytics info for specific date range"""
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        base = Like.objects.annotate(created=Cast('created_at', output_field=DateField()))\
+            .filter(created__range=(self.request.query_params.get('date_from'), self.request.query_params.get('date_to')))\
+            .values('post').annotate(likes=Count('pk'))
+        return base
+
+    @swagger_auto_schema(request_body=None, responses={200: ResponseLikeAnalyticsSerializer}, query_serializer=LikeAnalyticsSerializer)
+    def get(self, request, *args, **kwargs):
+        return Response(self.get_queryset())
